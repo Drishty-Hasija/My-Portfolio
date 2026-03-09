@@ -410,28 +410,28 @@ function App() {
       description: 'Real-time weather tracking app with detailed forecasts and interactive maps using OpenWeatherAPI.',
       tech: ['Dart','OpenWeatherAPI', 'Flutter'],
       github: 'https://github.com/Drishty-Hasija/weather-app',
-      live: '#'
+      // live: '#'
     },
     {
       title: 'Image Compressor',
       description: 'This application compresses the size of the image without losing the quality of the image.',
       tech: ['Dart', 'Flutter', 'Flutter Image Compress'],
       github: 'https://github.com/Drishty-Hasija/image-compressor',
-      live: '#'
+      // live: '#'
     },
     {
       title: 'Portfolio Website',
       description: 'This is a portfolio website built using react, showcasing my projects, skills, and experience in a visually appealing way.',
       tech: ['React.js', 'Tailwind', 'Typescript'],
       github: 'https://github.com/Drishty-Hasija/portfolio',
-      live: '#'
+      // live: '#'
     },
     {
-      title: 'Helping Hand',
-      description: 'An application created using flutter and python it is used to help the mute and blind people.',
-      tech: ['dart', 'Flutter', 'Python', 'FastAPI', 'Torch'],
-      github: 'https://github.com/Drishty-Hasija/helping-hand',
-      live: '#'
+      title: 'Calculator Application',
+      description: 'An application created using flutter which performs basic mathematical operations like addition, subtraction, multiplication and division.',
+      tech: ['dart', 'Flutter'],
+      github: '#',
+      // live: '#'
     }
   ];
 
@@ -590,7 +590,7 @@ function App() {
                         <FaGithub /> Code
                       </ProjectLink>
                       <ProjectLink href={project.live}>
-                        <FaExternalLinkAlt /> Live Demo
+                        {/* <FaExternalLinkAlt /> Live Demo */}
                       </ProjectLink>
                     </ProjectLinks>
                   </ProjectContent>
@@ -652,25 +652,6 @@ function App() {
                   </SkillItem>
                 ))}
                </SkillCategory>
-              
-             {/* <SkillCategory>
-                <SkillCategoryTitle>DevOps</SkillCategoryTitle>
-                {skills.devops.map((skill, index) => (
-                  <SkillItem key={index}>
-                    <SkillName>
-                      <span>{skill.name}</span>
-                      <span>{skill.level}%</span>
-                    </SkillName>
-                    <SkillBar>
-                      <SkillProgress
-                        initial={{ width: 0 }}
-                        animate={skillsInView ? { width: `${skill.level}%` } : {}}
-                        transition={{ duration: 1, delay: index * 0.1 }}
-                      />
-                    </SkillBar>
-                  </SkillItem>
-                ))}
-              </SkillCategory> */}
               
               <SkillCategory>
                 <SkillCategoryTitle>Database</SkillCategoryTitle>
