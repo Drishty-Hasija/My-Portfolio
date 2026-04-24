@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled, { createGlobalStyle, ThemeProvider } from 'styled-components';
 import { useInView } from 'react-intersection-observer';
 import { motion } from 'framer-motion';
+import emailjs from '@emailjs/browser';
 import { 
   FaGithub, 
   FaLinkedin, 
@@ -383,6 +384,45 @@ const TextArea = styled.textarea`
   }
 `;
 
+const PopupOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+`;
+
+const PopupBox = styled.div`
+  background: ${props => props.theme.colors.lightDark};
+  padding: 30px 40px;
+  border-radius: 10px;
+  text-align: center;
+  max-width: 400px;
+  border: 2px solid ${props => props.success ? "#00C853" : "#FF3D00"};
+`;
+
+const PopupText = styled.p`
+  color: ${props => props.theme.colors.text};
+  margin-bottom: 20px;
+  font-size: 16px;
+`;
+
+const CloseButton = styled.button`
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  background: ${props => props.success ? "#00C853" : "#FF3D00"};
+  color: white;
+`;
+
+
 const Footer = styled.footer`
   background: ${props => props.theme.colors.lightDark};
   padding: 30px 0;
@@ -395,6 +435,55 @@ function App() {
   const [projectsRef, projectsInView] = useInView({ threshold: 0.3 });
   const [skillsRef, skillsInView] = useInView({ threshold: 0.3 });
   const [contactRef, contactInView] = useInView({ threshold: 0.3 });
+  const [popup, setPopup] = useState({ show: false, message: "", success: true });
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({ name: "", email: "", subject: "", message: "" });
+  const handleSubmit = (e) => {
+  e.preventDefault();
+  setLoading(true);
+
+   const templateParams = {
+     from_name: formData.name,
+     from_email: formData.email,
+     subject: formData.subject,
+     message: formData.message,
+   };
+   console.log(import.meta.env);
+   emailjs.send(
+     import.meta.env.VITE_SERVICE_ID,
+     import.meta.env.VITE_TEMPLATE_ID,
+     templateParams,
+     import.meta.env.VITE_PUBLIC_KEY
+   )
+  .then(() => {
+      setTimeout(() => {
+      setPopup(prev => ({ ...prev, show: false }));
+      }, 3000);
+      setPopup({
+      show: true,
+      message: "Message sent successfully!",
+        success: true
+      });
+    
+      setFormData({
+        name: "",
+        email: "",
+        subject: "",
+        message: ""
+      });
+    })
+     .catch((error) => {
+      console.error(error);
+      setPopup({
+        show: true,
+        message: "Failed to send message. Try again.",
+        success: false
+      });
+    })
+      .finally(() => {
+        setLoading(false);
+    });
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -590,7 +679,6 @@ function App() {
                         <FaGithub /> Code
                       </ProjectLink>
                       <ProjectLink href={project.live}>
-                        {/* <FaExternalLinkAlt /> Live Demo */}
                       </ProjectLink>
                     </ProjectLinks>
                   </ProjectContent>
@@ -689,24 +777,59 @@ function App() {
             <p style={{ color: theme.colors.textSecondary, textAlign: 'center', marginBottom: '50px' }}>
               Interested in collaborating? Let's discuss your next project.
             </p>
-            <ContactForm>
-              <Input type="text" placeholder="Name" />
-              <Input type="email" placeholder="Email" />
-              <Input type="text" placeholder="Subject" />
-              <TextArea placeholder="Message" />
-              <Button
+            <ContactForm onSubmit={handleSubmit}>
+              <Input 
+                type="text" 
+                placeholder="Name"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              />
+
+              <Input 
+                type="email" 
+                placeholder="Email"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              />
+
+              <Input 
+                type="text" 
+                placeholder="Subject"
+                value={formData.subject}
+                onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+              />
+
+              <TextArea 
+                placeholder="Message"
+                value={formData.message}
+                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+              />
+             <Button
                 type="submit"
-                style={{ width: '100%', marginRight: 0 }}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                disabled={loading}
+                style={{ width: '100%', marginRight: 0, opacity: loading ? 0.6 : 1 }}
+                whileHover={{ scale: loading ? 1 : 1.02 }}
+                whileTap={{ scale: loading ? 1 : 0.98 }}
               >
-                Send Message
+                {loading ? "Sending..." : "Send Message"}
               </Button>
             </ContactForm>
           </motion.div>
         </Container>
       </Section>
-
+      {popup.show && (
+        <PopupOverlay>
+          <PopupBox success={popup.success}>
+            <PopupText>{popup.message}</PopupText>
+            <CloseButton
+              success={popup.success}
+              onClick={() => setPopup({ ...popup, show: false })}
+            >
+              Close
+            </CloseButton>
+          </PopupBox>
+        </PopupOverlay>
+      )}
       <Footer>
         <Container>
           <p style={{ color: theme.colors.textSecondary }}>
